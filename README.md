@@ -1,2 +1,1 @@
-# azakharau
-tg_expense_bot
+# tg_expense_bot
