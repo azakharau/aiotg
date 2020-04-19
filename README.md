@@ -1,1 +1,20 @@
-# tg_expense_bot
+# Telegram expense bot
+
+Asynchronous web server based on aiohttp and using Telegram Web API. 
+
+Can works in two modes:
+* longpooling (specify like debug mode)
+* webhook (specify like production mode)
+
+
+TODO
+-----------
+- [ ] Infrastructure design.
+- [ ] Data models design.
+- [ ] Controllers design.
+- [ ] Routes design.
+- [ ] Include aiopg into project.
+- [ ] Needed helpers: 
+  - [ ] DB init.
+  - [ ] Debug run with longpooling.
+- [ ] Logging subsystem.
