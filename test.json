@@ -1,0 +1,24 @@
+{
+  "update_id": 903737002,
+  "edited_message": {
+    "message_id": 7,
+    "from": {
+      "id": 424177117,
+      "is_bot": false,
+      "first_name": "Aliaksei",
+      "last_name": "Zakharau",
+      "username": "azakharau",
+      "language_code": "ru"
+    },
+    "chat": {
+      "id": 424177117,
+      "first_name": "Aliaksei",
+      "last_name": "Zakharau",
+      "username": "azakharau",
+      "type": "private"
+    },
+    "date": 1587676561,
+    "edit_date": 1587679286,
+    "text": "Eorotnrheu"
+  }
+}

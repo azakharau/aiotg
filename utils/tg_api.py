@@ -1,6 +1,27 @@
-"""Webhook utils for Telegram API"""
+"""Telegram API wrapper"""
+from enum import Enum
 
+import aiohttp
 import requests
+
+
+class TMethods(Enum):
+    get_me = "getMe"
+    get_updates = "getUpdates"
+    set_webhook = "setWebhook"
+    delete_webhook = "deleteWebhook"
+    get_webhook_info = "getWebhookInfo"
+    send_message = "sendMessage"
+    forward_message = "forwardMessage"
+    webhook_info = "WebhookInfo"
+
+
+def prepare_method(method: str) -> str:
+    return f"/{method}"
+
+
+def prepare_request_url(url: str, method: str) -> str:
+    return f"{url}{prepare_method(method)}"
 
 
 async def set_webhook(url: str):
@@ -40,5 +61,14 @@ async def delete_webhook(url: str):
     resp = requests.get(url)
     await resp.json()
 
+
 async def webhook_info(url: str):
     ...
+
+
+async def get_updates(session: aiohttp.ClientSession, url: str) -> dict:
+    async with session.post(
+            prepare_request_url(url, TMethods.get_updates.value)) as response:
+        payload = await response.json()
+        if payload["ok"]:
+            return payload["result"][-1]
