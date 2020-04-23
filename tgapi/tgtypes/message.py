@@ -1,9 +1,8 @@
 import dataclasses
-
 import typing
 
-from tgtypes.chat import Chat
-from tgtypes.user import User
+from .chat import Chat
+from .user import User
 
 
 @dataclasses.dataclass(frozen=False)

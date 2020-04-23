@@ -2,7 +2,10 @@
 from enum import Enum
 
 import aiohttp
-import requests
+
+import settings
+from utils.strformatters import prepare_request_url
+from . import exceptions
 
 
 class TMethods(Enum):
@@ -16,15 +19,7 @@ class TMethods(Enum):
     webhook_info = "WebhookInfo"
 
 
-def prepare_method(method: str) -> str:
-    return f"/{method}"
-
-
-def prepare_request_url(url: str, method: str) -> str:
-    return f"{url}{prepare_method(method)}"
-
-
-async def set_webhook(url: str):
+async def set_webhook(session: aiohttp.ClientSession, url: str):
     """
     Use this method to specify a url and receive
     incoming updates via an outgoing webhook.
@@ -42,11 +37,14 @@ async def set_webhook(url: str):
         dict object with response from telegram server.
 
     """
-    resp = requests.get(url)
-    await resp.json()
+    async with session.post(
+            prepare_request_url(url, TMethods.set_webhook.value)) as response:
+        payload = await response.json()
+        if payload["ok"]:
+            return payload["result"]
 
 
-async def delete_webhook(url: str):
+async def delete_webhook(session: aiohttp.ClientSession, url: str):
     """
     Use this method to remove webhook integration
     if you decide to switch back to getUpdates.
@@ -58,8 +56,12 @@ async def delete_webhook(url: str):
         dict object with response from telegram server.
 
     """
-    resp = requests.get(url)
-    await resp.json()
+    async with session.post(
+            prepare_request_url(url,
+                                TMethods.delete_webhook.value)) as response:
+        payload = await response.json()
+        if payload["ok"]:
+            return payload["result"]
 
 
 async def webhook_info(url: str):
@@ -67,8 +69,11 @@ async def webhook_info(url: str):
 
 
 async def get_updates(session: aiohttp.ClientSession, url: str) -> dict:
+    if not settings.DEBUG:
+        raise exceptions.FunctionNotAllowedInProduction(
+            "Use long polling methods only in debug mode!")
     async with session.post(
             prepare_request_url(url, TMethods.get_updates.value)) as response:
         payload = await response.json()
         if payload["ok"]:
-            return payload["result"][-1]
+            return payload["result"]

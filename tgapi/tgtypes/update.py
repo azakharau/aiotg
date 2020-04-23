@@ -1,8 +1,7 @@
+import typing
 from dataclasses import dataclass
 
-import typing
-
-from tgtypes.message import Message
+from .message import Message
 
 
 @dataclass()
