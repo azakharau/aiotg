@@ -3,8 +3,8 @@ import os
 DEBUG = True
 
 BOT_TOKEN = os.getenv('EXPENSE_BOT_TOKEN')
-
-TELEGRAM_API_URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
+BOT_URL = f'https://api.telegram.org/bot{BOT_TOKEN}'
+BOT_CHAT_ID = os.getenv('BOT_CHAT_ID')
 
 DB_USER = os.getenv('TG_EXPENSE_BOT_DB_USER')
 DB_PASS = os.getenv('TG_EXPENSE_BOT_DB_PASS')
