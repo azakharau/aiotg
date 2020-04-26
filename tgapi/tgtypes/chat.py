@@ -1,9 +1,10 @@
 import typing
 from dataclasses import dataclass
 
+from . import base
 
 @dataclass()
-class Chat:
+class Chat(base.BaseDataEntity):
     id: typing.Optional[int] = None
     type: typing.Optional[str] = None
     username: typing.Optional[str] = None

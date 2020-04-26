@@ -1,12 +1,13 @@
 import dataclasses
 import typing
 
+from . import base
 from .chat import Chat
 from .user import User
 
 
 @dataclasses.dataclass(frozen=False)
-class Message:
+class Message(base.BaseDataEntity):
     """This object represents a Telegram message."""
     message_id: typing.Optional[int] = None
     from_user: typing.Optional[User] = None
