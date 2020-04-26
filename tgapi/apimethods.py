@@ -1,5 +1,6 @@
 """Telegram API wrapper"""
 from enum import Enum
+from pprint import pprint
 
 import aiohttp
 
@@ -17,6 +18,7 @@ class TMethods(Enum):
     send_message = "sendMessage"
     forward_message = "forwardMessage"
     webhook_info = "WebhookInfo"
+    delete_message = "deleteMessage"
 
 
 async def set_webhook(session: aiohttp.ClientSession, url: str):
@@ -62,6 +64,8 @@ async def delete_webhook(session: aiohttp.ClientSession, url: str):
         payload = await response.json()
         if payload["ok"]:
             return payload["result"]
+        else:
+            raise Exception(payload)
 
 
 async def webhook_info(url: str):
@@ -74,6 +78,16 @@ async def get_updates(session: aiohttp.ClientSession, url: str) -> dict:
             "Use long polling methods only in debug mode!")
     async with session.post(
             prepare_request_url(url, TMethods.get_updates.value)) as response:
+        payload = await response.json()
+        if payload["ok"]:
+            return payload["result"]
+
+
+async def delete_message(session: aiohttp.ClientSession, url: str,
+                         chat_id: str, message_id: str) -> dict:
+    async with session.post(
+            f"{url}/{TMethods.delete_message.value}?"
+            f"chat_id={chat_id}&message_id={message_id}") as response:
         payload = await response.json()
         if payload["ok"]:
             return payload["result"]
