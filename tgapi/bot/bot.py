@@ -2,8 +2,7 @@ from typing import (Optional,
                     List,
                     Union)
 
-import settings
-from bot.base_bot import BaseBot
+from tgapi.bot.base_bot import BaseBot
 from tgapi import (tgtypes,
                    apimethods)
 

@@ -11,7 +11,7 @@ import aiohttp
 import certifi
 
 import settings
-from utils.mixins import SingletonMixin
+from tgapi.utils import SingletonMixin
 
 
 class BaseBot(SingletonMixin):

@@ -6,8 +6,8 @@ from typing import (Union,
                     Iterable,
                     Optional, Coroutine, Any)
 
-from bot.base_bot import BaseBot
-from bot.bot import Bot
+from tgapi.bot.base_bot import BaseBot
+from tgapi.bot.bot import Bot
 from tgapi import tgtypes
 from tgapi.exceptions import TelegramAPIException
 from .handler import Handler
