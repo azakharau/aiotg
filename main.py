@@ -1,17 +1,31 @@
-from aiohttp import web
-import ssl
+import asyncio
+import os
 
-async def handle(request):
-    name = request.match_info.get('name', "Anonymous")
-    text = "Hello, " + name
-    return web.Response(text=text)
+import uvloop
 
-app = web.Application()
-app.add_routes([web.get('/', handle),
-                web.get('/{name}', handle)])
+from bot.bot import Bot
+from dispatcher.dispatcher import Dispatcher
+
+tasks = []
+path = f"{os.getcwd()}/test.json"
+
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+bot = Bot()
+
+dispatcher = Dispatcher(bot=bot)
+
+@dispatcher.message_handler()
+async def test(message):
+    await bot.send_message(424177117, "Hello yoba")
 
 
-ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-ssl_context.load_cert_chain('domain_srv.crt', 'domain_srv.key')
+@dispatcher.message_handler()
+async def ttt(message):
+    await bot.send_message(message[0].from_user['id'], "2123")
 
-web.run_app(app, ssl_context=ssl_context)
+
+
+
+if __name__ == '__main__':
+    dispatcher.run()
