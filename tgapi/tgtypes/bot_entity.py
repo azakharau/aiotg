@@ -1,9 +1,10 @@
 import dataclasses
 
-from .base import Singleton, BaseDataEntity
+from utils.mixins import BaseDataEntityMixin, SingletonMixin
+
 
 @dataclasses.dataclass()
-class BotEntity(Singleton, BaseDataEntity):
+class BotEntity(SingletonMixin, BaseDataEntityMixin):
     id: int
     is_bot: bool
     first_name: str

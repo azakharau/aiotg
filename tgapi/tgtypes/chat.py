@@ -1,10 +1,11 @@
 import typing
 from dataclasses import dataclass
 
-from . import base
+from utils.mixins import BaseDataEntityMixin
+
 
 @dataclass()
-class Chat(base.BaseDataEntity):
+class Chat(BaseDataEntityMixin):
     id: typing.Optional[int] = None
     type: typing.Optional[str] = None
     username: typing.Optional[str] = None

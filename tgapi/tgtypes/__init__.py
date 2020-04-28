@@ -1,13 +1,13 @@
-from . import base
-from . import bot_entity
-from . import chat
-from . import message
-from . import update
-from . import user
+from .base import dataclass_factory
+from .bot_entity import BotEntity
+from .chat import Chat
+from .message import Message
+from .update import Update
+from .user import User
 
-__all__ = (base,
-           bot_entity,
-           chat,
-           message,
-           update,
-           user)
+__all__ = ("BotEntity",
+           "Chat",
+           "Message",
+           "Update",
+           "User",
+           "dataclass_factory")
