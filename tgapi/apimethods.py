@@ -97,7 +97,8 @@ async def get_updates(session: aiohttp.ClientSession,
                       url: str,
                       offset: Optional[int] = None,
                       limit: Optional[int] = None,
-                      timeout: Optional[int] = None) -> Union[list, Exception]:
+                      timeout: Optional[int] = None,
+                      allowed_updates: Optional[List[str]] = None) -> Union[list, Exception]:
     """
 
     Args:
@@ -106,21 +107,26 @@ async def get_updates(session: aiohttp.ClientSession,
         offset:
         limit:
         timeout:
+        allowed_updates:
 
     Returns:
 
     """
     if not settings.DEBUG:
-        raise exceptions.FunctionNotAllowedInProduction(
+        raise exceptions.FunctionNotAllowed(
             "Use long polling methods only in debug mode!")
     _params = {}
-
+    _offset = offset if offset else 0
     if offset:
         _params.update({"offset": offset})
+    else:
+        _params.update({"offset": _offset})
     if limit:
         _params.update({"limit": limit})
     if timeout:
         _params.update({"timeout": timeout})
+    if allowed_updates:
+        _params.update({"allowed_updates": allowed_updates})
 
     if _params:
         async with session.get(
@@ -128,6 +134,7 @@ async def get_updates(session: aiohttp.ClientSession,
                                                              _APIMethods.get_updates.value,
                                                              **_params)) as response:
             payload = await response.json()
+            _offset += 1
             return generate_payload(payload)
     else:
         async with session.get(
@@ -171,7 +178,7 @@ async def send_message(session: aiohttp.ClientSession,
                        disable_web_page_preview: Optional[bool] = None,
                        disable_notification: Optional[bool] = None,
                        reply_to_message_id: Optional[int] = None) -> \
-        Union[list, Exception]:
+        Union[dict, Exception]:
     """
 
     Args:
@@ -236,7 +243,7 @@ async def get_chat(session: aiohttp.ClientSession,
 
 
 async def get_me(session: aiohttp.ClientSession,
-                 url: str) -> Union[list, Exception]:
+                 url: str) -> Union[dict, Exception]:
     """
 
     Args:
