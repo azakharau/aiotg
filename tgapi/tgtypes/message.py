@@ -1,7 +1,7 @@
 import dataclasses
 import typing
 
-from utils.mixins import BaseDataEntityMixin
+from tgapi.utils import BaseDataEntityMixin
 from .chat import Chat
 from .user import User
 

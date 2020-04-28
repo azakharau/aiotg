@@ -1,11 +1,11 @@
 """Telegram API wrapper"""
 from enum import Enum
-from typing import Any, List, Coroutine, Optional, Union
+from typing import List, Optional, Union
 
 import aiohttp
 
 import settings
-from utils import urlformatters
+from .utils import urlformatters
 from . import exceptions
 
 

@@ -1,7 +1,7 @@
 import typing
 from dataclasses import dataclass
 
-from utils.mixins import BaseDataEntityMixin
+from tgapi.utils import BaseDataEntityMixin
 from .message import Message
 
 

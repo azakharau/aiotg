@@ -2,7 +2,7 @@ import dataclasses
 from typing import List, Optional
 
 from tgapi import exceptions
-from utils import mixins
+from tgapi.utils import mixins
 
 
 class Handler:

@@ -3,8 +3,8 @@ import os
 
 import uvloop
 
-from bot.bot import Bot
-from dispatcher.dispatcher import Dispatcher
+from tgapi.bot.bot import Bot
+from tgapi.dispatcher.dispatcher import Dispatcher
 
 tasks = []
 path = f"{os.getcwd()}/test.json"

@@ -1,6 +1,6 @@
 import dataclasses
 
-from utils.mixins import BaseDataEntityMixin, SingletonMixin
+from tgapi.utils import BaseDataEntityMixin, SingletonMixin
 
 
 @dataclasses.dataclass()
