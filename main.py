@@ -15,14 +15,17 @@ bot = Bot()
 
 dispatcher = Dispatcher(bot=bot)
 
-@dispatcher.message_handler()
-async def test(message):
-    await bot.send_message(424177117, "Hello yoba")
+@dispatcher.message_handler(commands=['/hello'])
+async def t(message):
+    await bot.send_message(message[0].from_user['id'], "Hello")
 
+@dispatcher.message_handler(commands=['/hi'])
+async def tt(message):
+    await bot.send_message(message[0].from_user['id'], "Zdarova")
 
 @dispatcher.message_handler()
 async def ttt(message):
-    await bot.send_message(message[0].from_user['id'], "2123")
+    await bot.send_message(424177117, "Hey you")
 
 
 
