@@ -19,5 +19,5 @@ TODO
   - [ ] DB init.
   - [ ] Debug run with longpooling.
 - [ ] Logging subsystem.
-- [ ] Telegram API methods asynchronous wrapper
+- [x] Telegram API methods asynchronous wrapper
 - [ ] Bot implementations based on custom library
