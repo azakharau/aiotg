@@ -1,8 +1,13 @@
 import dataclasses
-from typing import List, Optional
+import logging
+from typing import List, Optional, Tuple
 
-from tgapi import exceptions
+from tgapi import exceptions, tgtypes
 from tgapi.utils import mixins
+
+log = logging.getLogger()
+log.addHandler(logging.StreamHandler())
+log.setLevel(logging.DEBUG)
 
 
 class Handler:
@@ -17,26 +22,34 @@ class Handler:
     def register(self,
                  handler: 'HandlerObject.handler',
                  commands: Optional[list] = None,
-                 position: Optional[int] = None) -> bool:
+                 *filters) -> bool:
         """
 
         Args:
             handler:
-            position:
+            commands:
+            *filters:
 
         Returns:
 
         """
-        if commands:
+
+        if filters and commands:
+            _handler = HandlerObject(handler=handler,
+                                     filters=FilterObject(commands=commands,
+                                                          custom=
+                                                          list(filters)))
+        elif filters:
+            _handler = HandlerObject(handler=handler,
+                                     filters=FilterObject(custom=
+                                                          list(filters)))
+        elif commands:
             _handler = HandlerObject(handler=handler,
                                      filters=FilterObject(commands=commands))
         else:
             _handler = HandlerObject(handler=handler)
 
-        if position is None:
-            self.handlers.append(_handler)
-        else:
-            self.handlers.insert(position, _handler)
+        self.handlers.append(_handler)
 
         return True
 
@@ -70,8 +83,8 @@ class Handler:
 
             try:
                 if is_message:
-                    response = await self.check_filters(handler_obj,
-                                                        *args)
+                    response = await self._check_filters(handler_obj,
+                                                         *args)
                 else:
                     response = await handler_obj.handler(*args)
 
@@ -83,9 +96,10 @@ class Handler:
 
         return results
 
-    async def check_filters(self,
-                            handler: 'HandlerObject',
-                            object: list) -> Optional[callable]:
+    async def _check_filters(self,
+                             handler: 'HandlerObject',
+                             object: List[tgtypes.Message]) -> \
+            Optional[callable]:
         """
         Check if handler had an filter.
         If handler has it and it's a bot command -> awaited handler.
@@ -98,15 +112,67 @@ class Handler:
         Returns:
 
         """
-        if object[0].entities is None and handler.filters is None:
+        _filters_spec = (False, False)
+
+        if handler.filters is None:
+            log.debug(f"not handler.filters.commands and "
+                      f"not handler.filters.custom at {handler.handler.__name__}")
             return await handler.handler(object)
-        elif object[0].entities is None and handler.filters:
-            return None
-        elif object[0].entities[0]['type'] == "bot_command" \
-                and handler.filters:
-            if object[0].text in handler.filters.commands:
+
+        else:
+            _filters_spec: tuple = handler.filters.get_filters_spec()  # (commands: bool, custom: bool)
+            log.debug(f"{handler.handler.__name__}, {_filters_spec}")
+
+        if all(_filters_spec):
+            log.debug("handler.filters.commands and handler.filters.custom")
+            if self._check_custom_filters(handler, object) and \
+                    self._check_bot_commands(handler, object):
                 return await handler.handler(object)
-        return None
+
+            return None
+
+        elif _filters_spec[1] and not _filters_spec[0]:
+            log.debug(
+                "handler.filters.custom and not handler.filters.commands")
+            if self._check_custom_filters(handler, object):
+                return await handler.handler(object)
+
+            return None
+
+        elif _filters_spec[0] and not _filters_spec[1]:
+            log.debug(
+                "handler.filters.commands and not handler.filters.custom")
+            if self._check_bot_commands(handler, object):
+                return await handler.handler(object)
+
+            return None
+
+    def _check_custom_filters(self,
+                              handler: 'HandlerObject',
+                              object: list) -> bool:
+
+        if len(handler.filters.custom) > 1:
+            _result = []
+            for filter in handler.filters.custom:
+                if filter(object[0].text):
+                    _result.append(True)
+                continue
+            if all(_result):
+                return True
+        else:
+            if handler.filters.custom[0](object[0].text):
+                return True
+        return False
+
+    def _check_bot_commands(self,
+                            handler: 'HandlerObject',
+                            object: list) -> bool:
+        if object[0].entities is None:
+            return False
+        if object[0].entities[0]['type'] == "bot_command":
+            if object[0].text in handler.filters.commands:
+                return True
+        return False
 
 
 @dataclasses.dataclass()
@@ -118,3 +184,19 @@ class HandlerObject(mixins.BaseDataEntityMixin):
 @dataclasses.dataclass()
 class FilterObject(mixins.BaseDataEntityMixin):
     commands: Optional[list] = None
+    custom: Optional[list] = None
+
+    def get_filters_spec(self) -> Tuple[bool]:
+        _result = []
+
+        if self.commands is None:
+            _result.append(False)
+        else:
+            _result.append(True)
+
+        if self.custom is None:
+            _result.append(False)
+        else:
+            _result.append(True)
+
+        return tuple(_result)

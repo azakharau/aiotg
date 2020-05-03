@@ -64,7 +64,6 @@ class Dispatcher:
 
     async def _process_polling_updates(self, updates: list):
         call = []
-        print("updates received")
         for responses in itertools.chain.from_iterable(
                 await self.process_updates(updates)):
             for response in responses:
@@ -114,7 +113,7 @@ class Dispatcher:
     def register_message_handler(self,
                                  callback,
                                  *filters,
-                                 commands):
+                                 commands = None):
         """
 
         Args:
@@ -125,9 +124,9 @@ class Dispatcher:
         Returns:
 
         """
-        self._message_handlers.register(callback, commands)
+        self._message_handlers.register(callback, commands, *filters)
 
-    def message_handler(self, *filters, commands = None):
+    def message_handler(self, *filters, commands=None):
         """
 
         Args:

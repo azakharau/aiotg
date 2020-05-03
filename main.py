@@ -17,15 +17,16 @@ dispatcher = Dispatcher(bot=bot)
 
 @dispatcher.message_handler(commands=['/hello'])
 async def t(message):
-    await bot.send_message(message[0].from_user['id'], "Hello")
+    await bot.send_message(message[0].from_user['id'],
+                           f"Hello, {message[0].from_user['first_name']}")
 
-@dispatcher.message_handler(commands=['/hi'])
+@dispatcher.message_handler(lambda msg: msg.lower().startswith('p'))
 async def tt(message):
-    await bot.send_message(message[0].from_user['id'], "Zdarova")
+    await bot.send_message(message[0].from_user['id'], "Hi")
 
 @dispatcher.message_handler()
 async def ttt(message):
-    await bot.send_message(424177117, "Hey you")
+    await bot.send_message(424177117, "anon")
 
 
 
