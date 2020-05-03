@@ -1,6 +1,6 @@
 # Telegram Bot API implementation
 
-Asynchronous web server based on aiohttp and using Telegram Web API. 
+Asynchronous web server based on aiohttp and using Telegram Web API made for fun. 
 
 Can works in two modes:
 * longpooling (specify like debug mode)
