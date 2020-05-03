@@ -117,7 +117,7 @@ class Handler:
         if handler.filters is None:
             log.debug(f"not handler.filters.commands and "
                       f"not handler.filters.custom at {handler.handler.__name__}")
-            return await handler.handler(object)
+            return await handler.handler(*object)
 
         else:
             _filters_spec: tuple = handler.filters.get_filters_spec()  # (commands: bool, custom: bool)
@@ -125,52 +125,54 @@ class Handler:
 
         if all(_filters_spec):
             log.debug("handler.filters.commands and handler.filters.custom")
-            if self._check_custom_filters(handler, object) and \
-                    self._check_bot_commands(handler, object):
-                return await handler.handler(object)
+            if self._check_custom_filters(handler, *object) and \
+                    self._check_bot_commands(handler, *object):
+                return await handler.handler(*object)
 
             return None
 
         elif _filters_spec[1] and not _filters_spec[0]:
             log.debug(
                 "handler.filters.custom and not handler.filters.commands")
-            if self._check_custom_filters(handler, object):
-                return await handler.handler(object)
+            if self._check_custom_filters(handler, *object):
+                return await handler.handler(*object)
 
             return None
 
         elif _filters_spec[0] and not _filters_spec[1]:
             log.debug(
                 "handler.filters.commands and not handler.filters.custom")
-            if self._check_bot_commands(handler, object):
-                return await handler.handler(object)
+            if self._check_bot_commands(handler, *object):
+                return await handler.handler(*object)
 
             return None
 
     def _check_custom_filters(self,
                               handler: 'HandlerObject',
-                              object: list) -> bool:
+                              object) -> bool:
 
         if len(handler.filters.custom) > 1:
             _result = []
             for filter in handler.filters.custom:
-                if filter(object[0].text):
+                if filter(object.text):
                     _result.append(True)
                 continue
             if all(_result):
                 return True
         else:
-            if handler.filters.custom[0](object[0].text):
+            if handler.filters.custom[0](object.text):
                 return True
         return False
 
     def _check_bot_commands(self,
                             handler: 'HandlerObject',
-                            object: list) -> bool:
-        if object[0].entities is None:
+                            object) -> bool:
+
+        if object.entities is None:
             return False
-        if object[0].entities[0]['type'] == "bot_command":
-            if object[0].text in handler.filters.commands:
+
+        if object.entities[0]['type'] == "bot_command":
+            if object.text in handler.filters.commands:
                 return True
         return False
 
