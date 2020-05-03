@@ -63,8 +63,7 @@ class Handler:
 
         """
         for handler_obj in self.handlers:
-            registered = handler_obj.handler
-            if handler is registered:
+            if handler is handler_obj.handler:
                 self.handlers.remove(handler_obj)
                 return True
         return False
