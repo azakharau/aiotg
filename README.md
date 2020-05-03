@@ -1,4 +1,4 @@
-# Telegram expense bot
+# Telegram Bot API implementation
 
 Asynchronous web server based on aiohttp and using Telegram Web API. 
 
@@ -9,8 +9,9 @@ Can works in two modes:
 
 TODO
 -----------
-- [ ] Infrastructure design.
-- [ ] Data models design.
+- [x] Infrastructure design.
+- [x] Data models design.
+- [x] Library design
 - [ ] Controllers design.
 - [ ] Routes design.
 - [ ] Include aiopg into project.
@@ -18,3 +19,5 @@ TODO
   - [ ] DB init.
   - [ ] Debug run with longpooling.
 - [ ] Logging subsystem.
+- [x] Telegram API methods asynchronous wrapper
+- [ ] Bot implementations based on custom library
