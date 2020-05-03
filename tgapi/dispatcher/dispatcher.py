@@ -1,5 +1,6 @@
 import asyncio
 import itertools
+import json
 from asyncio import (BaseEventLoop,
                      AbstractEventLoop)
 from typing import (Union,
@@ -45,10 +46,11 @@ class Dispatcher:
 
     async def process_update(self,
                              update: tgtypes.Update) -> \
-            Coroutine[Any, Any, list]:
+            list:
         if update.message:
             return await self._message_handlers.notify(
-                tgtypes.dataclass_factory(tgtypes.Message, update.message))
+                tgtypes.dataclass_factory(tgtypes.Message, update.message),
+                is_message=True)
         if update.edited_message:
             return await self._message_handlers.notify(update.edited_message)
 
@@ -60,9 +62,8 @@ class Dispatcher:
                 update))
         return await asyncio.gather(*tasks)
 
-    async def _process_polling_updated(self, updates: list):
+    async def _process_polling_updates(self, updates: list):
         call = []
-        print(updates)
         for responses in itertools.chain.from_iterable(
                 await self.process_updates(updates)):
             for response in responses:
@@ -93,8 +94,10 @@ class Dispatcher:
                 break
 
             if updates:
+                with open('test.json', 'w') as f:
+                    json.dump([update.to_dict() for update in updates], f)
                 offset = updates[-1].update_id + 1
-                self._loop.create_task(self._process_polling_updated(updates))
+                self._loop.create_task(self._process_polling_updates(updates))
 
             if relax_timeout:
                 await asyncio.sleep(relax_timeout)
@@ -110,20 +113,20 @@ class Dispatcher:
     def register_message_handler(self,
                                  callback,
                                  *filters,
-                                 **kwargs):
+                                 commands = None):
         """
 
         Args:
             callback:
             *filters:
-            **kwargs:
+            commands:
 
         Returns:
 
         """
-        self._message_handlers.register(callback)
+        self._message_handlers.register(callback, commands, *filters)
 
-    def message_handler(self, *filters):
+    def message_handler(self, *filters, commands=None):
         """
 
         Args:
@@ -134,7 +137,9 @@ class Dispatcher:
         """
 
         def wrapper(callback):
-            self.register_message_handler(callback, *filters)
+            self.register_message_handler(callback,
+                                          *filters,
+                                          commands=commands)
             return callback
 
         return wrapper

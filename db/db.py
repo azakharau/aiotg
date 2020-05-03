@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import asyncpgsa
 
-import models
+from db import models
 
 
 async def init_db(app):
@@ -74,6 +74,6 @@ async def create_expense(conn,
 async def get_today_expense(conn) -> list:
     expenses =  await conn.fetch(
         models.expense.select().where(
-        models.expense.c.created == datetime.now())
+            models.expense.c.created == datetime.now())
     )
     return expenses

@@ -3,6 +3,7 @@ import typing
 
 from tgapi.utils import BaseDataEntityMixin
 from .chat import Chat
+from .entity import Entity
 from .user import User
 
 
@@ -16,3 +17,4 @@ class Message(BaseDataEntityMixin):
     edit_date: typing.Optional[int] = None
     text: typing.Optional[str] = None
     reply_to_message: typing.Optional[int] = None
+    entities: typing.Optional[Entity] = None
